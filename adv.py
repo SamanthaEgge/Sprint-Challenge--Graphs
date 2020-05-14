@@ -59,54 +59,68 @@ for move in traversal_path:
     player.travel(move)
     visited_rooms.add(player.current_room)
 
+
 if len(visited_rooms) == len(room_graph):
     print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
 else:
     print("TESTS FAILED: INCOMPLETE TRAVERSAL")
     print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
 
+opposites = {
+  'n': 's',
+  'e': 'w',
+  's': 'n',
+  'w': 'e'
+}
 
-
-#######
-# UNCOMMENT TO WALK AROUND
-#######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
-
-def discover_map(map):
+def discover_map():
   ## Need to discover every spot and direction on the map, so will be doing breadth first search
-
+  # Back tracking method? I think this will only work with DFS
+  discover_string = []
   # Create Queue, starting with first vertex
-  q = Queue()
-  q.enqueue(starting_vertex)
+  queue = []
 
-  # Keep track of visited nodes
-  visited = set()
+  prev_room = None
+  direction_traveled = None
+  
+  while len(map_dict) < 500:
+    ## Gets current set of exits
+    exits = player.current_room.get_exits()
+    ## check the current room agains the dictionary
+    if player.current_room.id not in map_dict:
+      new_data = {}
+      new_tupe = ()
+      if direction_traveled is None:
+        for exit in exits:
+          new_tupe = (player.current_room.id, prev_room)
+          queue.append(new_tupe)
+          new_data[exit] = '?'
+      else:
+        for exit in 
 
-  # Repeat until queue is empty
-  while q.size() > 0:
+      ## Developing the first dictionary 
+      map_dict[player.current_room.id] = new_data
+      print(map_dict)
+      prev_room = player.current_room.id
+    else:
+      ## This means the id is in the dictionary
+      ## For every single one other than first one
+      # Need to figure out which directions are here
+      exits = player.current_room.get_exits()
+      for direction in map_dict[player.current_room.id]:
+        if 
+      map_dict[player.current_room.id] = {}
 
-    # Remove current node being checked
-    v = q.dequeue()
 
-    # If it's not visited:
-    if v not in visited:
-      print(v)
+    ## Now pick a direction and go
+    new_direction = exits[random.randint(0, len(exits)-1)]
 
-      # Mark visited
-      visited.add(v)
 
-      for adjacent_vert in self.get_neighbors(v):
-        q.enqueue(adjacent_vert)
 
-  pass
+
+
+
+
   ## Run until all 500 spots are found
   ## Record room directions to dictionary
   ## Once map is full, find all empty slots
@@ -133,12 +147,27 @@ def find_deadends(map_dict):
 def pivot_path(direction):
   pass
 
-while len(visited_rooms) < 500:
-  ## Get all deadends
+# while len(visited_rooms) < 500:
+#   ## Get all deadends
 
-  pass
+#   pass
 
 
+
+
+#######
+# UNCOMMENT TO WALK AROUND
+#######
+player.current_room.print_room_description(player)
+while True:
+  discover_map()
+  cmds = input("-> ").lower().split(" ")
+  if cmds[0] in ["n", "s", "e", "w"]:
+    player.travel(cmds[0], True)
+  elif cmds[0] == "q":
+    break
+  else:
+    print("I did not understand that command.")
 
 
 

@@ -78,7 +78,9 @@ def discover_map():
   # Back tracking method? I think this will only work with DFS
   discover_string = []
   # Create Queue, starting with first vertex
-  queue = []
+  queue = set()
+  visited = set()
+
 
   prev_room = None
   direction_traveled = None
@@ -90,25 +92,48 @@ def discover_map():
     if player.current_room.id not in map_dict:
       new_data = {}
       new_tupe = ()
-      if direction_traveled is None:
+      # Develops new entry in map dict
+      map_dict[player.current_room.id] = {}
+      if prev_room is None:
         for exit in exits:
-          new_tupe = (player.current_room.id, prev_room)
+          new_tupe = (player.current_room.id, exit)
           queue.append(new_tupe)
           new_data[exit] = '?'
+        map_dict[player.current_room.id] = new_data
       else:
-        for exit in 
-
-      ## Developing the first dictionary 
-      map_dict[player.current_room.id] = new_data
-      print(map_dict)
-      prev_room = player.current_room.id
+        for exit in exits:
+          ## This sets the dictionary to point at the past room
+          # Then it also connects current room
+          if opposites[direction_traveled] == exit:
+            old_direction = (prev_room, direction_traveled)
+            visited.add(old_direction)
+            map_dict[prev_room][exit] = player.current_room.id
+            map_dict[player.current_room.id][opposites[direction_traveled]] = prev_room
+          else:
+            new_tupe = (player.current_room.id, exit)
+            queue.add(new_tupe)
+            new_data[exit] = '?'
+            map_dict[player.current_room.id][exit] = '?'
     else:
-      ## This means the id is in the dictionary
-      ## For every single one other than first one
-      # Need to figure out which directions are here
-      exits = player.current_room.get_exits()
-      for direction in map_dict[player.current_room.id]:
-        if 
+      for exit in exits:
+        if exit is not in map_dict[player.current_room.id]:
+          map_dict[player.current_room.id][exit] = '?'
+          new_tupe(player.current_room, exit)
+          queue.add(new_tupe)
+        
+
+
+
+
+    #   print(map_dict)
+    #   prev_room = player.current_room.id
+    # else:
+    #   ## This means the id is in the dictionary
+    #   ## For every single one other than first one
+    #   # Need to figure out which directions are here
+    #   exits = player.current_room.get_exits()
+    #   for direction in map_dict[player.current_room.id]:
+    #     if 
       map_dict[player.current_room.id] = {}
 
 
@@ -116,6 +141,9 @@ def discover_map():
     new_direction = exits[random.randint(0, len(exits)-1)]
 
 
+
+  print('we found all 500 rooms')
+  ## Now it's time to locate empty locations
 
 
 

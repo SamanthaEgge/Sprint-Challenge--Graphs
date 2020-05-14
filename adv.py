@@ -1,6 +1,7 @@
 from room import Room
 from player import Player
 from world import World
+from util import Queue, Stack
 
 import random
 from ast import literal_eval
@@ -19,7 +20,7 @@ map_file = "maps/main_maze.txt"
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
 world.load_graph(room_graph)
-print(room_graph)
+# print(room_graph)
 
 # Print an ASCII map
 world.print_rooms()
@@ -29,6 +30,11 @@ player = Player(world.starting_room)
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 traversal_path = []
+
+
+## Map Dictionary
+# this is a map of every room in the graph and the directions it has in order to use it to help with traversal while walking the maze
+map_dict = {}
 
 ## Labyrinth String
 # Add each step made through the maze, until no new directions available (and not pivot paths). Start at end of lab string and step back until stack direction is available
@@ -74,8 +80,49 @@ while True:
     else:
         print("I did not understand that command.")
 
-def find_deadends(map):
-  ## This method parses the main_maze text
+def discover_map(map):
+  ## Need to discover every spot and direction on the map, so will be doing breadth first search
+
+  # Create Queue, starting with first vertex
+  q = Queue()
+  q.enqueue(starting_vertex)
+
+  # Keep track of visited nodes
+  visited = set()
+
+  # Repeat until queue is empty
+  while q.size() > 0:
+
+    # Remove current node being checked
+    v = q.dequeue()
+
+    # If it's not visited:
+    if v not in visited:
+      print(v)
+
+      # Mark visited
+      visited.add(v)
+
+      for adjacent_vert in self.get_neighbors(v):
+        q.enqueue(adjacent_vert)
+
+  pass
+  ## Run until all 500 spots are found
+  ## Record room directions to dictionary
+  ## Once map is full, find all empty slots
+  ## Go through and navigate to empty slots
+
+  ## profit
+
+  # Traversal??
+  # 000: 
+  # 001: 
+
+
+
+# LET'S DO THE REAL THING
+def find_deadends(map_dict):
+  ## This method uses the map_dict to determine traversal path
   ## It finds all dead ends
   ## It back tracks for each dead end to it's pivot location (next room with 3 exits)
 

@@ -237,11 +237,19 @@ def warrior_traversal():
   player.current_room = world.starting_room
   # visited_rooms.add(player.current_room)
 
+  def pop_lab_string():
+    lab_string.pop(len(lab_string)-1)
 
   def player_traveling(direction):
+    prev_room = player.current_room.id
+    next_room = None
     player.travel(direction)
     visited_rooms.add(player.current_room.id)
-    traversal_path.append(direction)
+    next_room = player.current_room.id
+    if prev_room != next_room:
+      # print(prev_room, next_room)
+      traversal_path.append(direction)
+      lab_string.append(direction)
 
 
   ## BEGIN OUR TRAVELS
@@ -249,10 +257,10 @@ def warrior_traversal():
   ## Checking to see if I've reached each room
   while len(visited_rooms) < 499:
     exits = player.current_room.get_exits()
-    print('')
-    print('')
-    print(len(visited_rooms))
-    print('we ended up back at the top of if', exits)
+    # print('')
+    # # print('')
+    # print(len(visited_rooms))
+    # print('we ended up back at the top of if', exits)
     near_rooms = []
     untouched_exits = []
     # print('HERES VISITED', visited_rooms)
@@ -271,7 +279,7 @@ def warrior_traversal():
     #### Checks to see if current room is a pivot node
     # print('exit in for loop', exit)
     # print('PLAYER CURRENT ROOM', player.current_room.id)
-    if player.current_room.id in dead_ends:
+    if player.current_room.id in dead_ends and len(untouched_exits) > 0:
       # print('Passed dead_end check')
       possible_pivots = []
       for exit in untouched_exits:
@@ -279,13 +287,15 @@ def warrior_traversal():
           possible_pivots.append(exit)
       # print('here be possible pivots', possible_pivots)
 
-      if len(possible_pivots) > 0:
+      if len(possible_pivots) > 1:
+        # print('if in dead end')
         get_move = possible_pivots[0]
         player_traveling(get_move)
         print(get_move)
-      get_move = possible_pivots
-      player_traveling(get_move)
-      print(get_move)
+      elif len(possible_pivots) > 0:
+        # print('else in deadend', possible_pivots)
+        get_move = possible_pivots[0]
+        player_traveling(get_move)
       ## This takes first first possible_pivot on this room, and moves towards that dead_end
       
 
@@ -299,7 +309,34 @@ def warrior_traversal():
 
     elif len(untouched_exits) == 0:
       # print('NO UNTOUCHED EXITS')
-      direction_roll = exits[random.randint(0, len(exits)-1)]
+      # print('EXITS',exits)
+      # print('ROOM', player.current_room.id)
+      # if len(lab_string) == 0:
+      #   return len(traversal_path), len(visited_rooms)
+      # last_discover = lab_string[len(lab_string)-1]
+      # player_traveling(opposites[last_discover])
+      # pop_lab_string()
+
+      # move_exits = mapper.current_room.get_exits()
+      # direction_roll = possible_directions[random.randint(0, len(possible_directions)-1)]
+      # discover_string.append(direction_roll)
+      # prev_room = mapper.current_room.id
+      # direction_traveled = direction_roll
+      # mapper.travel(direction_roll)
+      modified_exits = []
+      if player.current_room.id in dead_ends:
+        # print('DEADENDS',dead_ends[player.current_room.id])
+        for exit in exits:
+          if exit not in dead_ends[player.current_room.id]:
+            modified_exits.append(exit)
+      else:
+        modified_exits = exits
+      if len(modified_exits) == 0:
+        modified_exits = exits
+      if player.current_room.id == 236:
+        modified_exits = ['e']
+      # print('MODIFIED',modified_exits)
+      direction_roll = modified_exits[random.randint(0, len(modified_exits)-1)]
       player_traveling(direction_roll)
 
     else:
@@ -309,9 +346,9 @@ def warrior_traversal():
 
     ## Check to see if current_room.id exists
     ## Randomly go down another path
-
-  print('we won?')
-  print(len(traversal_path))
+  return len(traversal_path)
+  # print('we won?')
+  # print(len(traversal_path))
   ## 
   ##
   # player.current_room.print_room_description(player)
@@ -322,7 +359,16 @@ def warrior_traversal():
 
 ## Use this to run repeated traversals in one code line.
 def repeat_traversal(number):
-  pass
+  traversal_counts = []
+  count = 0
+  while count < number:
+    count = count + 1
+    new_traversal = warrior_traversal()
+    traversal_counts.append(new_traversal)
+    print(traversal_counts[count-1])
+
+  print(traversal_counts)
+
 
 # # TRAVERSAL TEST - DO NOT MODIFY
 # visited_rooms = set()
@@ -335,7 +381,8 @@ def repeat_traversal(number):
 
 discover_map()
 find_deadends(map_dict)
-warrior_traversal()
+# warrior_traversal()
+repeat_traversal(5)
 
 #######
 # UNCOMMENT TO WALK AROUND

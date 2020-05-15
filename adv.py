@@ -183,7 +183,7 @@ def find_deadends(full_map):
       for key in map_dict[room]:
         prev_direction = key
       direction_room = map_dict[room][prev_direction]
-      while len(map_dict[direction_room]) is 2:
+      while len(map_dict[direction_room]) == 2:
         for path in map_dict[direction_room]:
           ## Makes sure you aren't moving backwards. Opposite choice, should move you back down the path you came from
           if path not in map_dict[direction_room]:
@@ -197,7 +197,7 @@ def find_deadends(full_map):
         dead_ends[direction_room].append(opposites[prev_direction])
       else:
         dead_ends[direction_room] = [opposites[prev_direction]]
-  # print('dead-ends', dead_ends)
+  print('dead-ends', dead_ends)
 
 
 ##################################### STARTING TRAVERSAL
@@ -215,6 +215,7 @@ def find_deadends(full_map):
 # visited_rooms = set()
 # player.current_room = world.starting_room
 # visited_rooms.add(player.current_room)
+
 
 def warrior_traversal():
   ### INITIALIZE ALL WARRIOR VARIABLES
@@ -237,6 +238,7 @@ def warrior_traversal():
   player.current_room = world.starting_room
   # visited_rooms.add(player.current_room)
 
+
   def pop_lab_string():
     lab_string.pop(len(lab_string)-1)
 
@@ -251,51 +253,49 @@ def warrior_traversal():
       traversal_path.append(direction)
       lab_string.append(direction)
 
-
   ## BEGIN OUR TRAVELS
 
   ## Checking to see if I've reached each room
   while len(visited_rooms) < 499:
     exits = player.current_room.get_exits()
-    # print('')
-    # # print('')
-    # print(len(visited_rooms))
-    # print('we ended up back at the top of if', exits)
-    near_rooms = []
+    print('')
+    print('')
+    print(len(visited_rooms))
+    print('ROOM ID',player.current_room.id)
+    print('we ended up back at the top of if', exits)
     untouched_exits = []
-    # print('HERES VISITED', visited_rooms)
+    print('HERES VISITED', visited_rooms)
     ## Develop near_rooms
     ## Take current id, and each exit direction. Get new room id
     ## Check to see if any exits are already navigated
     for exit in exits:
       #NXT ROOM   ##GRABBING ROOM OBJ IN MAP     # DIRECTION
       exit_check = map_dict[player.current_room.id][exit]
-      # print('EXIT CHECK', exit_check)
+      print('EXIT CHECK', exit_check)
       ## Add any room directions not visited
       if exit_check not in visited_rooms:
         untouched_exits.append(exit)
-    # print('ALTERED EXITS', untouched_exits)
+    print('ALTERED EXITS', untouched_exits)
     ## Check to see if any exits are a pivot node
     #### Checks to see if current room is a pivot node
-    # print('exit in for loop', exit)
-    # print('PLAYER CURRENT ROOM', player.current_room.id)
-    if player.current_room.id in dead_ends and len(untouched_exits) > 0:
-      # print('Passed dead_end check')
+    print('exit in for loop', exit)
+    print('PLAYER CURRENT ROOM', player.current_room.id)
+    if player.current_room.id in dead_ends:
+      print('Passed dead_end check')
       possible_pivots = []
       for exit in untouched_exits:
+        print('UNTOUCHED EXIT', exit)
         if exit in dead_ends[player.current_room.id]:
           possible_pivots.append(exit)
-      # print('here be possible pivots', possible_pivots)
+      print('here be possible pivots', possible_pivots)
 
-      if len(possible_pivots) > 1:
-        # print('if in dead end')
+      if len(possible_pivots) > 0:
         get_move = possible_pivots[0]
         player_traveling(get_move)
-        print(get_move)
-      elif len(possible_pivots) > 0:
-        # print('else in deadend', possible_pivots)
-        get_move = possible_pivots[0]
-        player_traveling(get_move)
+        # print(get_move)
+      get_move = possible_pivots
+      player_traveling(get_move)
+      # print(get_move)
       ## This takes first first possible_pivot on this room, and moves towards that dead_end
       
 
@@ -308,35 +308,19 @@ def warrior_traversal():
       player_traveling(direction_roll)
 
     elif len(untouched_exits) == 0:
-      # print('NO UNTOUCHED EXITS')
-      # print('EXITS',exits)
-      # print('ROOM', player.current_room.id)
-      # if len(lab_string) == 0:
-      #   return len(traversal_path), len(visited_rooms)
-      # last_discover = lab_string[len(lab_string)-1]
-      # player_traveling(opposites[last_discover])
-      # pop_lab_string()
+    #   print('NO UNTOUCHED EXITS')
+    #   print(exits)
+    #   len_fix = exits
+    #   len_fix.append('X')
+    #   print(len_fix)
+    #   while len(len_fix) < 4:
+    #     print(lab_string)
+    #     last_discover = lab_string[len(lab_string)-1]
+    #     player_traveling(opposites[last_discover])
+    #     pop_lab_string()
+    #     exits = player.current_room.get_exits
 
-      # move_exits = mapper.current_room.get_exits()
-      # direction_roll = possible_directions[random.randint(0, len(possible_directions)-1)]
-      # discover_string.append(direction_roll)
-      # prev_room = mapper.current_room.id
-      # direction_traveled = direction_roll
-      # mapper.travel(direction_roll)
-      modified_exits = []
-      if player.current_room.id in dead_ends:
-        # print('DEADENDS',dead_ends[player.current_room.id])
-        for exit in exits:
-          if exit not in dead_ends[player.current_room.id]:
-            modified_exits.append(exit)
-      else:
-        modified_exits = exits
-      if len(modified_exits) == 0:
-        modified_exits = exits
-      if player.current_room.id == 236:
-        modified_exits = ['e']
-      # print('MODIFIED',modified_exits)
-      direction_roll = modified_exits[random.randint(0, len(modified_exits)-1)]
+      direction_roll = exits[random.randint(0, len(exits)-1)]
       player_traveling(direction_roll)
 
     else:
@@ -346,7 +330,151 @@ def warrior_traversal():
 
     ## Check to see if current_room.id exists
     ## Randomly go down another path
-  return len(traversal_path)
+  return (len(traversal_path)), traversal_path
+  print('we won?')
+  print(len(traversal_path))
+  print(traversal_path)
+  ## 
+  ##
+  # player.current_room.print_room_description(player)
+
+
+
+
+
+
+
+# def warrior_traversal():
+#   ### INITIALIZE ALL WARRIOR VARIABLES
+#   ## RESET PLAYER
+#   ## NEW TRAVERSAL PATH
+#   ## RESET VISITED_ROOMS
+#   lab_string = []
+
+#   ## Emergency pullchute
+#   queue = []
+
+#   # Fill this out with directions to walk
+#   # traversal_path = ['n', 'n']
+#   traversal_path = []
+
+#   player = Player(world.starting_room)
+
+#   # TRAVERSAL TEST - DO NOT MODIFY
+#   visited_rooms = set()
+#   player.current_room = world.starting_room
+#   # visited_rooms.add(player.current_room)
+
+#   def pop_lab_string():
+#     lab_string.pop(len(lab_string)-1)
+
+#   def player_traveling(direction):
+#     prev_room = player.current_room.id
+#     next_room = None
+#     player.travel(direction)
+#     visited_rooms.add(player.current_room.id)
+#     next_room = player.current_room.id
+#     if prev_room != next_room:
+#       # print(prev_room, next_room)
+#       traversal_path.append(direction)
+#       lab_string.append(direction)
+
+
+#   ## BEGIN OUR TRAVELS
+
+#   ## Checking to see if I've reached each room
+#   while len(visited_rooms) < 499:
+#     exits = player.current_room.get_exits()
+#     # print('')
+#     # # print('')
+#     # print(len(visited_rooms))
+#     # print('we ended up back at the top of if', exits)
+#     near_rooms = []
+#     untouched_exits = []
+#     # print('HERES VISITED', visited_rooms)
+#     ## Develop near_rooms
+#     ## Take current id, and each exit direction. Get new room id
+#     ## Check to see if any exits are already navigated
+#     for exit in exits:
+#       #NXT ROOM   ##GRABBING ROOM OBJ IN MAP     # DIRECTION
+#       exit_check = map_dict[player.current_room.id][exit]
+#       # print('EXIT CHECK', exit_check)
+#       ## Add any room directions not visited
+#       if exit_check not in visited_rooms:
+#         untouched_exits.append(exit)
+#     # print('ALTERED EXITS', untouched_exits)
+#     ## Check to see if any exits are a pivot node
+#     #### Checks to see if current room is a pivot node
+#     # print('exit in for loop', exit)
+#     # print('PLAYER CURRENT ROOM', player.current_room.id)
+#     if player.current_room.id in dead_ends and len(untouched_exits) > 0:
+#       # print('Passed dead_end check')
+#       possible_pivots = []
+#       for exit in untouched_exits:
+#         if exit in dead_ends[player.current_room.id]:
+#           possible_pivots.append(exit)
+#       # print('here be possible pivots', possible_pivots)
+
+#       if len(possible_pivots) > 1:
+#         # print('if in dead end')
+#         get_move = possible_pivots[0]
+#         player_traveling(get_move)
+#         print(get_move)
+#       elif len(possible_pivots) > 0:
+#         # print('else in deadend', possible_pivots)
+#         get_move = possible_pivots[0]
+#         player_traveling(get_move)
+#       ## This takes first first possible_pivot on this room, and moves towards that dead_end
+      
+
+
+#     # If no pivot node at this id, go down any untouched path
+#     if len(untouched_exits) > 0:
+#       # print('RANDOM UNTOUCHED')
+#       ## Randomizing direction
+#       direction_roll = untouched_exits[random.randint(0, len(untouched_exits)-1)]
+#       player_traveling(direction_roll)
+
+#     elif len(untouched_exits) == 0:
+#       # print('NO UNTOUCHED EXITS')
+#       # print('EXITS',exits)
+#       # print('ROOM', player.current_room.id)
+#       # if len(lab_string) == 0:
+#       #   return len(traversal_path), len(visited_rooms)
+#       # last_discover = lab_string[len(lab_string)-1]
+#       # player_traveling(opposites[last_discover])
+#       # pop_lab_string()
+
+#       # move_exits = mapper.current_room.get_exits()
+#       # direction_roll = possible_directions[random.randint(0, len(possible_directions)-1)]
+#       # discover_string.append(direction_roll)
+#       # prev_room = mapper.current_room.id
+#       # direction_traveled = direction_roll
+#       # mapper.travel(direction_roll)
+#       modified_exits = []
+#       if player.current_room.id in dead_ends:
+#         # print('DEADENDS',dead_ends[player.current_room.id])
+#         for exit in exits:
+#           if exit not in dead_ends[player.current_room.id]:
+#             modified_exits.append(exit)
+#       else:
+#         modified_exits = exits
+#       if len(modified_exits) == 0:
+#         modified_exits = exits
+#       if player.current_room.id == 236:
+#         modified_exits = ['e']
+#       # print('MODIFIED',modified_exits)
+#       direction_roll = modified_exits[random.randint(0, len(modified_exits)-1)]
+#       player_traveling(direction_roll)
+
+#     else:
+#       print('fuck you extra')
+
+#     ## We've hit this point if 
+
+#     ## Check to see if current_room.id exists
+#     ## Randomly go down another path
+#   return len(traversal_path)
   # print('we won?')
   # print(len(traversal_path))
   ## 
@@ -363,8 +491,9 @@ def repeat_traversal(number):
   count = 0
   while count < number:
     count = count + 1
-    new_traversal = warrior_traversal()
+    new_traversal, travel_path = warrior_traversal()
     traversal_counts.append(new_traversal)
+    # print(travel_path)
     print(traversal_counts[count-1])
 
   print(traversal_counts)
@@ -381,8 +510,8 @@ def repeat_traversal(number):
 
 discover_map()
 find_deadends(map_dict)
-# warrior_traversal()
-repeat_traversal(5)
+warrior_traversal()
+# repeat_traversal(1000)
 
 #######
 # UNCOMMENT TO WALK AROUND

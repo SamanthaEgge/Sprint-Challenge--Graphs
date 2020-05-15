@@ -243,83 +243,30 @@ def find_deadends(full_map):
   prev_direction = None
   prev_room = None
 
-
-  # def get_keyvalue(dicset):
-  #   for key, value in dicset.items():
-  #     direction = key
-  #     direction_room = value
-  #     return direction, direction_room
-
-
   # This grabs every dead end room id
   ## This should be recursion if I had 1 sliver of a brain
   for room in map_dict:
     num_exits = map_dict[room]
     if len(num_exits) == 1:
       prev_room = room
-      print('heres starter room', room)
       for key in map_dict[room]:
         prev_direction = key
-        print('heres our prev direction', prev_direction)
       direction_room = map_dict[room][prev_direction]
-      print('heres our new direction room', direction_room)
-      # print(map_dict[room])
-      # print('WHATS EVEN PRINT',direction_room)
-      # print(prev_direction)
-      # print(map_dict)
-      # print(map_dict[83])
-      # print(map_dict[99])
-      # print('direction',direction)
       while len(map_dict[direction_room]) is 2:
-        print('SUSPECT MAP DICT TWO', map_dict[direction_room])
         for path in map_dict[direction_room]:
-          print('checking SUSPECT MAP DICT', map_dict[direction_room])
-          print('path options', path)
           ## Makes sure you aren't moving backwards. Opposite choice, should move you back down the path you came from
           if path not in map_dict[direction_room]:
             print('fuck you')
           elif map_dict[direction_room][path] != prev_room:
-            print('prev_room, map_dict[dir_room][path]', prev_room, map_dict[direction_room][path])
-            print('HERE BE A PATH',path)
-            print(map_dict[direction_room])
-            prev_room = direction_room ## 80
-            prev_direction = path ## n
-            direction_room = map_dict[prev_room][prev_direction] #11 'e', 's'
-            print('')
+            prev_room = direction_room
+            prev_direction = path
+            direction_room = map_dict[prev_room][prev_direction]
 
       if direction_room in dead_ends:
         dead_ends[direction_room].append(opposites[prev_direction])
       else:
         dead_ends[direction_room] = [opposites[prev_direction]]
-      print('YARR BE OUR DEAD ENDS',dead_ends)
-      #   # There are two nodes here with two different directions, we need the direction that is not prev_direction to point at our next node in line.
-      #   # make that new direction the prev_direction
-      #   # After while loop take inverse of prev_direction and direction_room and assign it to dead_ends
-      #   print('thIISS?', prev_direction, direction)
-      #   print(direction_room)
-      #   direction, direction_room = get_keyvalue(map_dict[direction_room])
-      #   dead_ends[direction_room] = opposites[direction]
-        # if direction is not prev_direction:
-
-      # Pairs dead_end to next room
-
   print('dead-ends', dead_ends)
-  
-
-  # for death in dead_ends:
-  #   path_number = None
-  #   # map_dict[death][]
-  #   ## Access room, get_exit, save dir as prev_direction, get exit id number
-  #   # access that id.get_exits
-  #   # if len(num_exits) == 2:
-  #   # 
-
-
-  ## Save to dictionary:
-      # pivot: direction of deadend
-
-  
-  # pass
 
 def pivot_path(direction):
   pass

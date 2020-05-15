@@ -235,9 +235,12 @@ def warrior_traversal():
   # TRAVERSAL TEST - DO NOT MODIFY
   visited_rooms = set()
   player.current_room = world.starting_room
-  visited_rooms.add(player.current_room)
+  # visited_rooms.add(player.current_room)
 
 
+  def player_traveling(direction):
+    player.travel(direction)
+    visited_rooms.add(player.current_room)
 
 
   ## BEGIN OUR TRAVELS
@@ -265,29 +268,33 @@ def warrior_traversal():
     print('ALTERED EXITS', untouched_exits)
     ## Check to see if any exits are a pivot node
     #### Checks to see if current room is a pivot node
-    print('exit in for loop', exit)
+    # print('exit in for loop', exit)
+    print('PLAYER CURRENT ROOM', player.current_room.id)
     if player.current_room.id in dead_ends:
       print('Passed dead_end check')
       possible_pivots = []
       for exit in untouched_exits:
-        for route in dead_ends[player.current_room.id]:
-          if route == exit:
-            possible_pivots.append(route)
+        if exit in dead_ends[player.current_room.id]:
+          possible_pivots.append(exit)
       print('here be possible pivots', possible_pivots)
       get_move = possible_pivots[0]
       print(get_move)
       ## This takes first first possible_pivot on this room, and moves towards that dead_end
-      player.travel(get_move)
+      player_traveling(get_move)
+
 
     # If no pivot node at this id, go down any untouched path
     if len(untouched_exits) > 0:
+      print('RANDOM UNTOUCHED')
       ## Randomizing direction
       direction_roll = untouched_exits[random.randint(0, len(untouched_exits)-1)]
-      player.travel(direction_roll)
+      player_traveling(direction_roll)
 
     elif len(untouched_exits) == 0:
+      print('NO UNTOUCHED EXITS')
       direction_roll = exits[random.randint(0, len(exits)-1)]
-      player.travel(direction_roll)
+      player_traveling(direction_roll)
+
     else:
       print('fuck you extra')
 

@@ -197,7 +197,7 @@ def find_deadends(full_map):
         dead_ends[direction_room].append(opposites[prev_direction])
       else:
         dead_ends[direction_room] = [opposites[prev_direction]]
-  print('dead-ends', dead_ends)
+  # print('dead-ends', dead_ends)
 
 
 ##################################### STARTING TRAVERSAL
@@ -240,7 +240,8 @@ def warrior_traversal():
 
   def player_traveling(direction):
     player.travel(direction)
-    visited_rooms.add(player.current_room)
+    visited_rooms.add(player.current_room.id)
+    traversal_path.append(direction)
 
 
   ## BEGIN OUR TRAVELS
@@ -254,44 +255,50 @@ def warrior_traversal():
     print('we ended up back at the top of if', exits)
     near_rooms = []
     untouched_exits = []
-
+    # print('HERES VISITED', visited_rooms)
     ## Develop near_rooms
     ## Take current id, and each exit direction. Get new room id
     ## Check to see if any exits are already navigated
     for exit in exits:
       #NXT ROOM   ##GRABBING ROOM OBJ IN MAP     # DIRECTION
       exit_check = map_dict[player.current_room.id][exit]
-      print('EXIT CHECK', exit_check)
+      # print('EXIT CHECK', exit_check)
       ## Add any room directions not visited
       if exit_check not in visited_rooms:
         untouched_exits.append(exit)
-    print('ALTERED EXITS', untouched_exits)
+    # print('ALTERED EXITS', untouched_exits)
     ## Check to see if any exits are a pivot node
     #### Checks to see if current room is a pivot node
     # print('exit in for loop', exit)
-    print('PLAYER CURRENT ROOM', player.current_room.id)
+    # print('PLAYER CURRENT ROOM', player.current_room.id)
     if player.current_room.id in dead_ends:
-      print('Passed dead_end check')
+      # print('Passed dead_end check')
       possible_pivots = []
       for exit in untouched_exits:
         if exit in dead_ends[player.current_room.id]:
           possible_pivots.append(exit)
-      print('here be possible pivots', possible_pivots)
-      get_move = possible_pivots[0]
+      # print('here be possible pivots', possible_pivots)
+
+      if len(possible_pivots) > 0:
+        get_move = possible_pivots[0]
+        player_traveling(get_move)
+        print(get_move)
+      get_move = possible_pivots
+      player_traveling(get_move)
       print(get_move)
       ## This takes first first possible_pivot on this room, and moves towards that dead_end
-      player_traveling(get_move)
+      
 
 
     # If no pivot node at this id, go down any untouched path
     if len(untouched_exits) > 0:
-      print('RANDOM UNTOUCHED')
+      # print('RANDOM UNTOUCHED')
       ## Randomizing direction
       direction_roll = untouched_exits[random.randint(0, len(untouched_exits)-1)]
       player_traveling(direction_roll)
 
     elif len(untouched_exits) == 0:
-      print('NO UNTOUCHED EXITS')
+      # print('NO UNTOUCHED EXITS')
       direction_roll = exits[random.randint(0, len(exits)-1)]
       player_traveling(direction_roll)
 
@@ -303,11 +310,11 @@ def warrior_traversal():
     ## Check to see if current_room.id exists
     ## Randomly go down another path
 
-
+  print('we won?')
+  print(len(traversal_path))
   ## 
   ##
   # player.current_room.print_room_description(player)
-  pass
 
 
 

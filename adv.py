@@ -40,32 +40,8 @@ map_dict = {}
 # Add each step made through the maze, until no new directions available (and not pivot paths). Start at end of lab string and step back until stack direction is available
 lab_string = []
 
-
-## Cannot use stack??
-# stack:{000, E}, {104, S}
-# Dictionary? Stack?
-# order to dictionary 
-## This only provides n e s w, NOT room numbers
-
-
-
-
-# TRAVERSAL TEST - DO NOT MODIFY
-visited_rooms = set()
-player.current_room = world.starting_room
-visited_rooms.add(player.current_room)
-
-for move in traversal_path:
-    player.travel(move)
-    visited_rooms.add(player.current_room)
-
-
-if len(visited_rooms) == len(room_graph):
-    print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
-else:
-    print("TESTS FAILED: INCOMPLETE TRAVERSAL")
-    print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
-
+## Opposites Table
+# Used for swapping directionals around for connections
 opposites = {
   'n': 's',
   'e': 'w',
@@ -73,10 +49,19 @@ opposites = {
   'w': 'e'
 }
 
+
+
+## Cannot use stack??
+# stack:{000, E}, {104, S}
+# Dictionary? Stack?
+# order to dictionary 
+## This only provides n e s w, NOT room numbers
+
 def discover_map():
   ## Need to discover every spot and direction on the map, so will be doing breadth first search
   # Back tracking method? I think this will only work with DFS
   discover_string = []
+  counter = 0
 
   # Create queue for later
   queue = set()
@@ -90,6 +75,7 @@ def discover_map():
     exits = player.current_room.get_exits()
     ## check the current room agains the dictionary
     if player.current_room.id not in map_dict:
+      print('we in here')
       new_data = {}
       new_tuple = ()
       # Develops new entry in map dict for new nodes discovered
@@ -116,6 +102,7 @@ def discover_map():
             map_dict[player.current_room.id][exit] = '?'
     #This Node exists, so we need to examine the current dictionary and see if we need to update anything
     else:
+      print('we were not in map_dict')
       for exit in exits:
         ## Adds connecting paths
         changing_tuple = ()
@@ -124,8 +111,8 @@ def discover_map():
           map_dict[prev_room][exit] = player.current_room.id
           map_dict[player.current_room.id][opposites[direction_traveled]] = prev_room
           queue.remove(changing_tuple)
-        ## Creates new zones for us to look at
-        elif exit not in map_dict[player.current_room.id]
+        ## Creates new zones to the queue, and adds untouched paths to dictionary
+        elif exit not in map_dict[player.current_room.id]:
           changing_tuple = (player.current_room.id, exit)
           queue.add(changing_tuple)
           map_dict[player.current_room.id][exit]
@@ -133,13 +120,66 @@ def discover_map():
           print('nothing new')
         
     ## Now that we've dealt with the dictionary and queue we need to move to the next room
+    possible_directions = []
+
+    counter += 1
+    ## We're going D E E P
+    # This is finding all possible exits, then adding those to our possibilities
+    print('counter', counter)
     for exit in exits:
-      if room_dict[player.current_room.id][exit] is not '?':
+      print('after counter exits', exit)
+      if map_dict[player.current_room.id][exit] is '?':
+        possible_directions.append(exit)
+    
+    ## If there's possible directions, we're going to roll those directions and then move into it
+    if len(possible_directions) > 0:
+      # print('we have possible directions', possible_directions)
+      direction_roll = possible_directions[random.randint(0, len(possible_directions)-1)]
+      print('direction_roll', direction_roll)
+      discover_string.append(direction_roll)
+      player.travel(direction_roll)
+
+    ## If we don't have possible directions we need to move backwards through our string trail until we do
+    else:
+      print('moving backwards')
+      while len(possible_directions) == 0:
+        player.travel(opposites[direction_roll])
+        discover_string.pop(len(direction_roll)-1)
+        move_exits = player.current_room.get_exits()
+        for exit in move_exits:
+          if map_dict[player.current_room.id][exit] == '?':
+            player.travel(exit)
+
+    
+
+
+    # if prev_room:
+    #   if [room[prev_room] for room in queue]
+    #   if prev_room[]
 
 
 
 
+  # print('we found all 500 rooms')
 
+
+
+
+# TRAVERSAL TEST - DO NOT MODIFY
+visited_rooms = set()
+player.current_room = world.starting_room
+visited_rooms.add(player.current_room)
+
+for move in traversal_path:
+    player.travel(move)
+    visited_rooms.add(player.current_room)
+
+
+if len(visited_rooms) == len(room_graph):
+    print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
+else:
+    print("TESTS FAILED: INCOMPLETE TRAVERSAL")
+    print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
 
     #   print(map_dict)
     #   prev_room = player.current_room.id
@@ -150,15 +190,15 @@ def discover_map():
     #   exits = player.current_room.get_exits()
     #   for direction in map_dict[player.current_room.id]:
     #     if 
-      map_dict[player.current_room.id] = {}
+      # map_dict[player.current_room.id] = {}
 
 
     ## Now pick a direction and go
-    new_direction = exits[random.randint(0, len(exits)-1)]
+    # new_direction = exits[random.randint(0, len(exits)-1)]
 
 
 
-  print('we found all 500 rooms')
+  # print('we found all 500 rooms')
   ## Now it's time to locate empty locations
 
 

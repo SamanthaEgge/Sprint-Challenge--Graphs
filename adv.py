@@ -118,7 +118,7 @@ def discover_map():
 
     ## We're going D E E P
     # This is finding all possible exits, then adding those to our possibilities
-    print('map_dict', map_dict)
+    # print('map_dict', map_dict)
     for exit in exits:
       if map_dict[player.current_room.id][exit] is '?':
         possible_directions.append(exit)
@@ -223,13 +223,27 @@ for move in traversal_path:
 
 
 # LET'S DO THE REAL THING
-def find_deadends(map_dict):
+def find_deadends(full_map):
   ## This method uses the map_dict to determine traversal path
   ## It finds all dead ends
   ## It back tracks for each dead end to it's pivot location (next room with 3 exits)
+  prev_direction = None
+  dead_ends = []
+
+
+  for room in map_dict:
+    num_exits = world.rooms[room].get_exits()
+    if len(num_exits) == 1:
+      dead_ends.append(world.rooms[room].id)
+  
+  print(dead_ends)
+
+
 
   ## Save to dictionary:
       # pivot: direction of deadend
+
+  
   pass
 
 def pivot_path(direction):
@@ -248,6 +262,7 @@ def pivot_path(direction):
 #######
 player.current_room.print_room_description(player)
 discover_map()
+find_deadends(map_dict)
 while True:
   cmds = input("-> ").lower().split(" ")
   if cmds[0] in ["n", "s", "e", "w"]:

@@ -69,6 +69,7 @@ def discover_map():
   #Holding variables for us in function
   prev_room = None
   direction_traveled = None
+  backwards_motion = False
   
   while len(map_dict) < 500:
     ## Gets current set of exits
@@ -93,8 +94,10 @@ def discover_map():
         for exit in exits:
           ## This sets the dictionary to point at the past room
           # Then it also connects current room
+          print('BACKWARDS EXIT INFO')
+          print('for exit', exit)
           if opposites[direction_traveled] == exit:
-            map_dict[prev_room][exit] = player.current_room.id
+            map_dict[prev_room][direction_traveled] = player.current_room.id
             map_dict[player.current_room.id][opposites[direction_traveled]] = prev_room
           else:
             new_tuple = (player.current_room.id, exit)
@@ -102,7 +105,11 @@ def discover_map():
             map_dict[player.current_room.id][exit] = '?'
     #This Node exists, so we need to examine the current dictionary and see if we need to update anything
     else:
-      print('we were not in map_dict')
+      print('we were in map_dict')
+      print('room #', player.current_room.id)
+      print('room_dict', map_dict)
+      print('directions', player.current_room.get_exits())
+      print(queue)
       for exit in exits:
         ## Adds connecting paths
         changing_tuple = ()
@@ -113,11 +120,13 @@ def discover_map():
           queue.remove(changing_tuple)
         ## Creates new zones to the queue, and adds untouched paths to dictionary
         elif exit not in map_dict[player.current_room.id]:
+          print('is this the failure point')
           changing_tuple = (player.current_room.id, exit)
           queue.add(changing_tuple)
-          map_dict[player.current_room.id][exit]
+          map_dict[player.current_room.id][exit] = '?'
         else:
           print('nothing new')
+          print()
         
     ## Now that we've dealt with the dictionary and queue we need to move to the next room
     possible_directions = []
@@ -126,6 +135,8 @@ def discover_map():
     ## We're going D E E P
     # This is finding all possible exits, then adding those to our possibilities
     print('counter', counter)
+    print('map_dict', map_dict)
+    print('discover_string', discover_string)
     for exit in exits:
       print('after counter exits', exit)
       if map_dict[player.current_room.id][exit] is '?':
@@ -137,31 +148,42 @@ def discover_map():
       direction_roll = possible_directions[random.randint(0, len(possible_directions)-1)]
       print('direction_roll', direction_roll)
       discover_string.append(direction_roll)
+      prev_room = player.current_room.id
+      direction_traveled = direction_roll
       player.travel(direction_roll)
 
     ## If we don't have possible directions we need to move backwards through our string trail until we do
     else:
       print('moving backwards')
       while len(possible_directions) == 0:
-        player.travel(opposites[direction_roll])
-        discover_string.pop(len(direction_roll)-1)
+        last_discover = discover_string[len(discover_string)-1]
+        print(last_discover)
+        player.travel(opposites[last_discover])
+        print(player.current_room.id)
+        discover_string.pop(len(discover_string)-1)
+        print('new discover', discover_string)
         move_exits = player.current_room.get_exits()
+        print('backwards exits found', move_exits)
         for exit in move_exits:
-          if map_dict[player.current_room.id][exit] == '?':
-            player.travel(exit)
+          print('we in move backwards exit check', exit)
+          if map_dict[player.current_room.id][exit] is '?':
+            print('we got through the if statement')
+            possible_directions.append(exit)
+      # print('we have possible directions', possible_directions)
+      direction_roll = possible_directions[random.randint(0, len(possible_directions)-1)]
+      print('direction_roll', direction_roll)
+      discover_string.append(direction_roll)
+      prev_room = player.current_room.id
+      direction_traveled = direction_roll
+      player.travel(direction_roll)
+  print('we found all 500 rooms')
 
-    
-
-
-    # if prev_room:
-    #   if [room[prev_room] for room in queue]
-    #   if prev_room[]
 
 
 
 
-  # print('we found all 500 rooms')
-
+##### discover_string = instead of using directions, use ids
+## try to find the nearest id which has an open pathway
 
 
 

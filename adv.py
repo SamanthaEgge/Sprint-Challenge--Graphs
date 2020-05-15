@@ -69,6 +69,7 @@ def discover_map():
   #Holding variables for us in function
   prev_room = None
   direction_traveled = None
+  untouched_nodes = False
   backwards_motion = False
   
   while len(map_dict) < 500:
@@ -84,9 +85,10 @@ def discover_map():
       # This only triggers on first room
       if prev_room is None:
         for exit in exits:
-          new_tuple = (player.current_room.id, exit)
-          queue.add(new_tuple)
+          # new_tuple = (player.current_room.id, exit)
           new_data[exit] = '?'
+        ## Just need to know which room to attend. Check at end if there's still question marks before moving.
+        queue.add(player.current_room.id)
         map_dict[player.current_room.id] = new_data
 
       # This should trigger for each new node discovered
@@ -100,8 +102,8 @@ def discover_map():
             map_dict[prev_room][direction_traveled] = player.current_room.id
             map_dict[player.current_room.id][opposites[direction_traveled]] = prev_room
           else:
-            new_tuple = (player.current_room.id, exit)
-            queue.add(new_tuple)
+            # Build exits, flip boolean so I know I have new nodes to explore
+            untouched_nodes = True
             map_dict[player.current_room.id][exit] = '?'
     #This Node exists, so we need to examine the current dictionary and see if we need to update anything
     else:
@@ -112,21 +114,16 @@ def discover_map():
       print(queue)
       for exit in exits:
         ## Adds connecting paths
-        changing_tuple = ()
+        # if this was previous direction traveled, updated prev node and current node to path (might already be done)
         if opposites[direction_traveled] == exit:
-          changing_tuple = (prev_room, exit)
-          map_dict[prev_room][exit] = player.current_room.id
+          map_dict[prev_room][direction_traveled] = player.current_room.id
           map_dict[player.current_room.id][opposites[direction_traveled]] = prev_room
-          queue.remove(changing_tuple)
         ## Creates new zones to the queue, and adds untouched paths to dictionary
         elif exit not in map_dict[player.current_room.id]:
-          print('is this the failure point')
-          changing_tuple = (player.current_room.id, exit)
-          queue.add(changing_tuple)
+          untouched_nodes = True
           map_dict[player.current_room.id][exit] = '?'
-        else:
-          print('nothing new')
-          print()
+        # else:
+        #   print('nothing new')
         
     ## Now that we've dealt with the dictionary and queue we need to move to the next room
     possible_directions = []
@@ -144,6 +141,9 @@ def discover_map():
     
     ## If there's possible directions, we're going to roll those directions and then move into it
     if len(possible_directions) > 0:
+      queue.discard(player.current_room.id)
+      if len(possible_directions) > 1:
+        queue.add(player.current_room.id)
       # print('we have possible directions', possible_directions)
       direction_roll = possible_directions[random.randint(0, len(possible_directions)-1)]
       print('direction_roll', direction_roll)

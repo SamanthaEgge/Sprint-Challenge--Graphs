@@ -77,11 +77,11 @@ def discover_map():
   ## Need to discover every spot and direction on the map, so will be doing breadth first search
   # Back tracking method? I think this will only work with DFS
   discover_string = []
-  # Create Queue, starting with first vertex
+
+  # Create queue for later
   queue = set()
-  visited = set()
 
-
+  #Holding variables for us in function
   prev_room = None
   direction_traveled = None
   
@@ -91,36 +91,52 @@ def discover_map():
     ## check the current room agains the dictionary
     if player.current_room.id not in map_dict:
       new_data = {}
-      new_tupe = ()
-      # Develops new entry in map dict
+      new_tuple = ()
+      # Develops new entry in map dict for new nodes discovered
       map_dict[player.current_room.id] = {}
+      # This only triggers on first room
       if prev_room is None:
         for exit in exits:
-          new_tupe = (player.current_room.id, exit)
-          queue.append(new_tupe)
+          new_tuple = (player.current_room.id, exit)
+          queue.add(new_tuple)
           new_data[exit] = '?'
         map_dict[player.current_room.id] = new_data
+
+      # This should trigger for each new node discovered
       else:
         for exit in exits:
           ## This sets the dictionary to point at the past room
           # Then it also connects current room
           if opposites[direction_traveled] == exit:
-            old_direction = (prev_room, direction_traveled)
-            visited.add(old_direction)
             map_dict[prev_room][exit] = player.current_room.id
             map_dict[player.current_room.id][opposites[direction_traveled]] = prev_room
           else:
-            new_tupe = (player.current_room.id, exit)
-            queue.add(new_tupe)
-            new_data[exit] = '?'
+            new_tuple = (player.current_room.id, exit)
+            queue.add(new_tuple)
             map_dict[player.current_room.id][exit] = '?'
+    #This Node exists, so we need to examine the current dictionary and see if we need to update anything
     else:
       for exit in exits:
-        if exit is not in map_dict[player.current_room.id]:
-          map_dict[player.current_room.id][exit] = '?'
-          new_tupe(player.current_room, exit)
-          queue.add(new_tupe)
+        ## Adds connecting paths
+        changing_tuple = ()
+        if opposites[direction_traveled] == exit:
+          changing_tuple = (prev_room, exit)
+          map_dict[prev_room][exit] = player.current_room.id
+          map_dict[player.current_room.id][opposites[direction_traveled]] = prev_room
+          queue.remove(changing_tuple)
+        ## Creates new zones for us to look at
+        elif exit not in map_dict[player.current_room.id]
+          changing_tuple = (player.current_room.id, exit)
+          queue.add(changing_tuple)
+          map_dict[player.current_room.id][exit]
+        else:
+          print('nothing new')
         
+    ## Now that we've dealt with the dictionary and queue we need to move to the next room
+    for exit in exits:
+      if room_dict[player.current_room.id][exit] is not '?':
+
+
 
 
 
